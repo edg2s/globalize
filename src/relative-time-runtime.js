@@ -3,10 +3,14 @@ define([
 	"./common/validate/parameter-presence",
 	"./common/validate/parameter-type/number",
 	"./core-runtime",
+	"./relative-time/formatter/fn",
 
 	"./number-runtime",
 	"./plural-runtime"
-], function( runtimeKey, validateParameterPresence, validateParameterTypeNumber, Globalize ) {
+], function( runtimeKey, validateParameterPresence, validateParameterTypeNumber, Globalize,
+	relativeTimeFormatterFn ) {
+
+Globalize._relativeTimeFormatterFn = relativeTimeFormatterFn;
 
 Globalize.formatRelativeTime =
 Globalize.prototype.formatRelativeTime = function( value, unit, options ) {

@@ -12,9 +12,9 @@ define([
 	"./common/validate/message-type",
 	"./common/validate/parameter-presence",
 	"./common/validate/parameter-type",
-	"./common/validate/parameter-type/message-variables",
 	"./common/validate/parameter-type/plain-object",
 	"./core",
+	"./message/formatter/fn",
 	"./message/formatter-runtime-bind",
 	"./util/always-array",
 
@@ -22,8 +22,8 @@ define([
 ], function( Cldr, MessageFormat, cacheGet, cacheSet, createError, createErrorPluralModulePresence,
 	runtimeBind, validateDefaultLocale, validateMessageBundle, validateMessagePresence,
 	validateMessageType, validateParameterPresence, validateParameterType,
-	validateParameterTypeMessageVariables, validateParameterTypePlainObject, Globalize,
-	messageFormatterRuntimeBind, alwaysArray ) {
+	validateParameterTypePlainObject, Globalize, messageFormatterFn, messageFormatterRuntimeBind,
+	alwaysArray ) {
 
 var slice = [].slice;
 
@@ -63,7 +63,7 @@ Globalize.loadMessages = function( json ) {
  */
 Globalize.messageFormatter =
 Globalize.prototype.messageFormatter = function( path ) {
-	var cldr, formatter, isPluralModulePresent, message, pluralGenerator, returnFn, runtimeArgs,
+	var cldr, formatter, isPluralModulePresent, message, pluralGenerator, returnFn,
 		args = slice.call( arguments, 0 );
 
 	validateParameterPresence( path, "path" );
@@ -96,25 +96,11 @@ Globalize.prototype.messageFormatter = function( path ) {
 
 	formatter = new MessageFormat( cldr.locale, pluralGenerator ).compile( message );
 
-	returnFn = function messageFormatter( variables ) {
-		if ( typeof variables === "number" || typeof variables === "string" ) {
-			variables = [].slice.call( arguments, 0 );
-		}
-		validateParameterTypeMessageVariables( variables, "variables" );
-		return formatter( variables );
-	};
+	returnFn = messageFormatterFn( formatter );
 
 	cacheSet( args, cldr, returnFn );
 
-	runtimeArgs = {
-		formatter: messageFormatterRuntimeBind( cldr, formatter )
-	};
-
-	if ( isPluralModulePresent ) {
-		runtimeArgs.pluralGenerator = pluralGenerator;
-	}
-
-	runtimeBind( args, cldr, runtimeArgs, returnFn );
+	runtimeBind( args, cldr, returnFn, [ messageFormatterRuntimeBind( cldr, formatter ) ] );
 
 	return returnFn;
 };

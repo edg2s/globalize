@@ -1,9 +1,11 @@
 define([
 	"./common/runtime-key",
 	"./common/validate/parameter-type/message-variables",
-	"./core-runtime"
-], function( runtimeKey, validateParameterTypeMessageVariables, Globalize ) {
+	"./core-runtime",
+	"./message/formatter/fn"
+], function( runtimeKey, validateParameterTypeMessageVariables, Globalize, messageFormatterFn ) {
 
+Globalize._messageFormatterFn = messageFormatterFn;
 Globalize._messageFormat = {};
 Globalize._validateParameterTypeMessageVariables = validateParameterTypeMessageVariables;
 

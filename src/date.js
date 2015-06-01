@@ -11,11 +11,10 @@ define([
 	"./common/validate/parameter-type/string",
 	"./core",
 	"./date/expand-pattern",
-	"./date/format",
+	"./date/formatter/fn",
 	"./date/format-properties",
-	"./date/parse",
+	"./date/parser/fn",
 	"./date/parse-properties",
-	"./date/tokenizer",
 	"./date/tokenizer-properties",
 
 	"cldr/event",
@@ -23,8 +22,8 @@ define([
 	"./number"
 ], function( Cldr, cacheGet, cacheSet, runtimeBind, validateCldr, validateDefaultLocale,
 	validateParameterPresence, validateParameterTypeDate, validateParameterTypePlainObject,
-	validateParameterTypeString, Globalize, dateExpandPattern, dateFormat, dateFormatProperties,
-	dateParse, dateParseProperties, dateTokenizer, dateTokenizerProperties ) {
+	validateParameterTypeString, Globalize, dateExpandPattern, dateFormatterFn,
+	dateFormatProperties, dateParserFn, dateParseProperties, dateTokenizerProperties ) {
 
 function validateRequiredCldr( path, value ) {
 	validateCldr( path, value, {
@@ -85,18 +84,11 @@ Globalize.prototype.dateFormatter = function( options ) {
 		});
 	}
 
-	returnFn = function dateFormatter( value ) {
-		validateParameterPresence( value, "value" );
-		validateParameterTypeDate( value, "value" );
-		return dateFormat( value, numberFormatters, properties );
-	};
+	returnFn = dateFormatterFn( numberFormatters, properties );
 
 	cacheSet( args, cldr, returnFn );
 
-	runtimeBind( args, cldr, {
-		numberFormatters: numberFormatters,
-		properties: properties
-	}, returnFn );
+	runtimeBind( args, cldr, returnFn, [ numberFormatters, properties ] );
 
 	return returnFn;
 };
@@ -134,23 +126,11 @@ Globalize.prototype.dateParser = function( options ) {
 
 	numberParser = this.numberParser({ raw: "0" });
 
-	returnFn = function dateParser( value ) {
-		var tokens;
-
-		validateParameterPresence( value, "value" );
-		validateParameterTypeString( value, "value" );
-
-		tokens = dateTokenizer( value, numberParser, tokenizerProperties );
-		return dateParse( value, tokens, parseProperties ) || null;
-	};
+	returnFn = dateParserFn( numberParser, parseProperties, tokenizerProperties );
 
 	cacheSet( args, cldr, returnFn );
 
-	runtimeBind( args, cldr, {
-		numberParser: numberParser,
-		parseProperties: parseProperties,
-		tokenizerProperties: tokenizerProperties
-	}, returnFn );
+	runtimeBind( args, cldr, returnFn, [ numberParser, parseProperties, tokenizerProperties ] );
 
 	return returnFn;
 };

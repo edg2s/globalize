@@ -11,10 +11,10 @@ define([
 	"./common/validate/parameter-type/number",
 	"./common/validate/parameter-type/plain-object",
 	"./common/validate/parameter-type/string",
-	"./number/format",
+	"./number/formatter/fn",
 	"./number/format-properties",
 	"./number/numbering-system",
-	"./number/parse",
+	"./number/parser/fn",
 	"./number/parse-properties",
 	"./number/pattern",
 	"./number/symbol",
@@ -25,8 +25,8 @@ define([
 ], function( Globalize, cacheGet, cacheSet, createErrorUnsupportedFeature, runtimeBind,
 	validateCldr, validateDefaultLocale, validateParameterPresence, validateParameterRange,
 	validateParameterTypeNumber, validateParameterTypePlainObject, validateParameterTypeString,
-	numberFormat, numberFormatProperties, numberNumberingSystem, numberParse, numberParseProperties,
-	numberPattern, numberSymbol, stringPad ) {
+	numberFormatterFn, numberFormatProperties, numberNumberingSystem, numberParserFn,
+	numberParseProperties, numberPattern, numberSymbol, stringPad ) {
 
 var slice = [].slice;
 
@@ -95,17 +95,11 @@ Globalize.prototype.numberFormatter = function( options ) {
 			minimumFractionDigits, 20 );
 	}
 
-	returnFn = function numberFormatter( value ) {
-		validateParameterPresence( value, "value" );
-		validateParameterTypeNumber( value, "value" );
-		return numberFormat( value, properties );
-	};
+	returnFn = numberFormatterFn( properties );
 
 	cacheSet( args, cldr, returnFn );
 
-	runtimeBind( args, cldr, {
-		properties: properties
-	}, returnFn );
+	runtimeBind( args, cldr, returnFn, [ properties ] );
 
 	return returnFn;
 };
@@ -147,17 +141,11 @@ Globalize.prototype.numberParser = function( options ) {
 
 	cldr.off( "get", validateCldr );
 
-	returnFn = function numberParser( value ) {
-		validateParameterPresence( value, "value" );
-		validateParameterTypeString( value, "value" );
-		return numberParse( value, properties );
-	};
+	returnFn = numberParserFn( properties );
 
 	cacheSet( args, cldr, returnFn );
 
-	runtimeBind( args, cldr, {
-		properties: properties
-	}, returnFn );
+	runtimeBind( args, cldr, returnFn, [ properties ] );
 
 	return returnFn;
 };

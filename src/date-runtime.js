@@ -5,13 +5,18 @@ define([
 	"./common/validate/parameter-type/string",
 	"./core-runtime",
 	"./date/format",
+	"./date/formatter/fn",
 	"./date/parse",
+	"./date/parser/fn",
 	"./date/tokenizer",
 
 	"./number-runtime"
 ], function( runtimeKey, validateParameterPresence, validateParameterTypeDate,
-	validateParameterTypeString, Globalize, dateFormat, dateParse, dateTokenizer ) {
+	validateParameterTypeString, Globalize, dateFormat, dateFormatterFn, dateParse, dateParserFn,
+	dateTokenizer ) {
 
+Globalize._dateFormatterFn = dateFormatterFn;
+Globalize._dateParserFn = dateParserFn;
 Globalize._dateFormat = dateFormat;
 Globalize._dateParser = dateParse;
 Globalize._dateTokenizer = dateTokenizer;

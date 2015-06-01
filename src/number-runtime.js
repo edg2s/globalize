@@ -6,15 +6,19 @@ define([
 	"./common/validate/parameter-type/string",
 	"./core-runtime",
 	"./number/format",
+	"./number/formatter/fn",
 	"./number/parse",
+	"./number/parser/fn",
 	"./util/number/round"
 ], function( runtimeKey, createErrorUnsupportedFeature, validateParameterPresence,
 	validateParameterTypeNumber, validateParameterTypeString, Globalize, numberFormat,
-	numberParse, numberRound ) {
+	numberFormatterFn, numberParse, numberParserFn, numberRound ) {
 
 Globalize._createErrorUnsupportedFeature = createErrorUnsupportedFeature;
 Globalize._numberFormat = numberFormat;
+Globalize._numberFormatterFn = numberFormatterFn;
 Globalize._numberParse = numberParse;
+Globalize._numberParserFn = numberParserFn;
 Globalize._numberRound = numberRound;
 Globalize._validateParameterPresence = validateParameterPresence;
 Globalize._validateParameterTypeNumber = validateParameterTypeNumber;

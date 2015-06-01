@@ -32,41 +32,49 @@ DEPENDENCIES = {
 
 DEPENDENCIES_VARS = {
 	currencyFormatter: {
+		currencyFormatterFn: true,
 		currencyNameFormat: true,
 		validateParameterPresence: true,
 		validateParameterTypeNumber: true
 	},
 	dateFormatter: {
+		dateFormatterFn: true,
 		dateFormat: true,
 		validateParameterPresence: true,
 		validateParameterTypeDate: true
 	},
 	dateParser: {
+		dateParserFn: true,
 		dateParse: true,
 		dateTokenizer: true,
 		validateParameterPresence: true,
 		validateParameterTypeString: true
 	},
 	messageFormatter: {
+		messageFormatterFn: true,
 		messageFormat: true,
 		validateParameterTypeMessageVariables: true
 	},
 	numberFormatter: {
+		numberFormatterFn: true,
 		numberFormat: true,
 		numberRound: true,
 		validateParameterPresence: true,
 		validateParameterTypeNumber: true
 	},
 	numberParser: {
+		numberParserFn: true,
 		numberParse: true,
 		validateParameterPresence: true,
 		validateParameterTypeString: true
 	},
 	pluralGenerator: {
+		pluralGeneratorFn: true,
 		validateParameterPresence: true,
 		validateParameterTypeNumber: true
 	},
 	relativeTimeFormatter: {
+		relativeTimeFormatterFn: true,
 		validateParameterPresence: true,
 		validateParameterTypeNumber: true
 	}
@@ -104,18 +112,14 @@ function stringifyIncludingFunctionsAndUndefined( object ) {
 }
 
 function compile( formatterOrParser ) {
-	var runtimeArgsNames,
+	var fnName = /^function\s+([\w\$]+)\s*\(/.exec( formatterOrParser.toString() )[ 1 ],
 		runtimeKey = formatterOrParser.runtimeKey,
 		runtimeArgs = formatterOrParser.runtimeArgs;
 
-	runtimeArgsNames = Object.keys( runtimeArgs ).join( ", " );
-	runtimeArgs = Object.keys( runtimeArgs ).map(function( key ) {
-		return runtimeArgs[ key ];
-	}).map( stringifyIncludingFunctionsAndUndefined ).join( ", " );
+	runtimeArgs = runtimeArgs.map( stringifyIncludingFunctionsAndUndefined ).join( ", " );
 
-	return "Globalize." + runtimeKey + " = (function( " + runtimeArgsNames + " ) {\n" +
-		"  return " + formatterOrParser.toString() + "\n" +
-		"}(" + runtimeArgs + "));";
+	return "Globalize." + runtimeKey + " = " + fnName + "Fn(" +
+		runtimeArgs + ");";
 }
 
 function deduceDependenciesVars( formatterOrParser ) {

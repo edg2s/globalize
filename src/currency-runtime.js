@@ -3,12 +3,14 @@ define([
 	"./common/validate/parameter-presence",
 	"./common/validate/parameter-type/number",
 	"./core-runtime",
+	"./currency/formatter/fn",
 	"./currency/name-format",
 
 	"./number-runtime"
 ], function( runtimeKey, validateParameterPresence, validateParameterTypeNumber, Globalize,
-	currencyNameFormat ) {
+	currencyFormatterFn, currencyNameFormat ) {
 
+Globalize._currencyFormatterFn = currencyFormatterFn;
 Globalize._currencyNameFormat = currencyNameFormat;
 
 Globalize.currencyFormatter =

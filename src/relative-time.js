@@ -8,7 +8,7 @@ define([
 	"./common/validate/parameter-presence",
 	"./common/validate/parameter-type/number",
 	"./common/validate/parameter-type/string",
-	"./relative-time/format",
+	"./relative-time/formatter/fn",
 	"./relative-time/properties",
 
 	"./number",
@@ -16,7 +16,7 @@ define([
 	"cldr/event"
 ], function( Globalize, cacheGet, cacheSet, runtimeBind, validateCldr, validateDefaultLocale,
 	validateParameterPresence, validateParameterTypeNumber, validateParameterTypeString,
-	relativeTimeFormat, relativeTimeProperties ) {
+	relativeTimeFormatterFn, relativeTimeProperties ) {
 
 /**
  * .formatRelativeTime( value, unit [, options] )
@@ -73,20 +73,11 @@ Globalize.prototype.relativeTimeFormatter = function( unit, options ) {
 	numberFormatter = this.numberFormatter( options );
 	pluralGenerator = this.pluralGenerator();
 
-	returnFn = function relativeTimeFormatter( value ) {
-		validateParameterPresence( value, "value" );
-		validateParameterTypeNumber( value, "value" );
-
-		return relativeTimeFormat( value, numberFormatter, pluralGenerator, properties );
-	};
+	returnFn = relativeTimeFormatterFn( numberFormatter, pluralGenerator, properties );
 
 	cacheSet( args, cldr, returnFn );
 
-	runtimeBind( args, cldr, {
-		numberFormatter: numberFormatter,
-		pluralGenerator: pluralGenerator,
-		properties: properties
-	}, returnFn );
+	runtimeBind( args, cldr, returnFn, [ numberFormatter, pluralGenerator, properties ] );
 
 	return returnFn;
 };

@@ -74,8 +74,8 @@ module.exports = function( grunt ) {
 					jshintrc: ".jshintrc"
 				}
 			},
-			tool: {
-				src: [ "tool/*.js" ],
+			tools: {
+				src: [ "tools/*.js" ],
 				options: {
 					jshintrc: ".jshintrc"
 				}
@@ -606,7 +606,7 @@ module.exports = function( grunt ) {
 	// Default task.
 	grunt.registerTask( "default", [
 		"jshint:grunt",
-		"jshint:tool",
+		"jshint:tools",
 		"jshint:source",
 		"jshint:test",
 		"jscs:grunt",

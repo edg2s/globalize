@@ -2,9 +2,12 @@ define([
 	"./common/runtime-key",
 	"./common/validate/parameter-presence",
 	"./common/validate/parameter-type/number",
-	"./core-runtime"
-], function( runtimeKey, validateParameterPresence, validateParameterTypeNumber, Globalize ) {
+	"./core-runtime",
+	"./plural/generator/fn"
+], function( runtimeKey, validateParameterPresence, validateParameterTypeNumber, Globalize,
+	pluralGeneratorFn ) {
 
+Globalize._pluralGeneratorFn = pluralGeneratorFn;
 Globalize._validateParameterTypeNumber = validateParameterTypeNumber;
 
 Globalize.plural =

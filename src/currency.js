@@ -10,7 +10,7 @@ define([
 	"./common/validate/parameter-type/number",
 	"./common/validate/parameter-type/plain-object",
 	"./currency/code-properties",
-	"./currency/name-format",
+	"./currency/formatter/fn",
 	"./currency/name-properties",
 	"./currency/symbol-properties",
 	"./util/object/omit",
@@ -20,7 +20,7 @@ define([
 	"cldr/supplemental"
 ], function( Globalize, cacheGet, cacheSet, runtimeBind, validateCldr, validateDefaultLocale,
 	validateParameterPresence, validateParameterTypeNumber, validateParameterTypeCurrency,
-	validateParameterTypePlainObject, currencyCodeProperties, currencyNameFormat,
+	validateParameterTypePlainObject, currencyCodeProperties, currencyFormatterFn,
 	currencyNameProperties, currencySymbolProperties, objectOmit ) {
 
 function validateRequiredCldr( path, value ) {
@@ -80,34 +80,18 @@ Globalize.prototype.currencyFormatter = function( currency, options ) {
 	if ( style === "symbol" || style === "accounting" ) {
 		numberFormatter = this.numberFormatter( options );
 
-		returnFn = function currencyFormatter( value ) {
-			return numberFormatter( value );
-		};
+		returnFn = currencyFormatterFn( numberFormatter );
 
-		runtimeBind( args, cldr, {
-			numberFormatter: numberFormatter
-		}, returnFn );
+		runtimeBind( args, cldr, returnFn, [ numberFormatter ] );
 
 	// Return formatter when style is "code" or "name".
 	} else {
 		numberFormatter = this.numberFormatter( options );
 		pluralGenerator = this.pluralGenerator();
 
-		returnFn = function currencyFormatter( value ) {
-			validateParameterPresence( value, "value" );
-			validateParameterTypeNumber( value, "value" );
-			return currencyNameFormat(
-				numberFormatter( value ),
-				pluralGenerator( value ),
-				properties
-			);
-		};
+		returnFn = currencyFormatterFn( numberFormatter, pluralGenerator, properties );
 
-		runtimeBind( args, cldr, {
-			numberFormatter: numberFormatter,
-			pluralGenerator: pluralGenerator,
-			properties: properties
-		}, returnFn );
+		runtimeBind( args, cldr, returnFn, [ numberFormatter, pluralGenerator, properties ] );
 	}
 
 	cacheSet( args, cldr, returnFn );

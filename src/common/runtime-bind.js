@@ -2,7 +2,7 @@ define([
 	"./runtime-key"
 ], function( runtimeKey ) {
 
-return function( args, cldr, runtimeArgs, fn ) {
+return function( args, cldr, fn, runtimeArgs ) {
 	var fnName = /^function\s+([\w\$]+)\s*\(/.exec( fn.toString() )[ 1 ],
 		locale = cldr.locale;
 

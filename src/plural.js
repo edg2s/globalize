@@ -12,12 +12,14 @@ define([
 	"./common/validate/parameter-type/plain-object",
 	"./common/validate/parameter-type/plural-type",
 	"./core",
+	"./plural/generator/fn",
 
 	"cldr/event",
 	"cldr/supplemental"
 ], function( Cldr, MakePlural, cacheGet, cacheSet, runtimeBind, validateCldr, validateDefaultLocale,
 	validateParameterPresence, validateParameterType, validateParameterTypeNumber,
-	validateParameterTypePlainObject, validateParameterTypePluralType, Globalize ) {
+	validateParameterTypePlainObject, validateParameterTypePluralType, Globalize,
+	pluralGeneratorFn ) {
 
 /**
  * .plural( value )
@@ -80,18 +82,11 @@ Globalize.prototype.pluralGenerator = function( options ) {
 		"cardinals": !isOrdinal
 	});
 
-	returnFn = function pluralGenerator( value ) {
-		validateParameterPresence( value, "value" );
-		validateParameterTypeNumber( value, "value" );
-
-		return plural( value );
-	};
+	returnFn = pluralGeneratorFn( plural );
 
 	cacheSet( args, cldr, returnFn );
 
-	runtimeBind( args, cldr, {
-		plural: plural
-	}, returnFn );
+	runtimeBind( args, cldr, returnFn, [ plural ] );
 
 	return returnFn;
 };
